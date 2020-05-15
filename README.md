@@ -1,9 +1,15 @@
 # Password Decrypter for Chromium-based browsers
 
+![](https://git.duework.org/julien/cpdecrypt/-/wikis/uploads/5747a35a1b5a3f1cf97b8a8bc1702da1/header.jpg)
+
 This program is a Python-based Windows decryption tool for credentials saved by the following Chromium-based browsers:
-* [Google Chrome](https://www.google.com/chrome/) (all),
-* [Chromium Project](https://chromium.woolyss.com/download/en/) (all),
-* [Microsoft Edge](https://www.microsoft.com/en-us/edge) (>= 80).
+
+| Browser | Version |
+| ------ | ------ |
+| [Google Chrome](https://www.google.com/chrome/) | All, even >= 80 |
+| [Chromium Project](https://chromium.woolyss.com/download/en/) | All, even >= 80 |
+| [Microsoft Edge](https://www.microsoft.com/en-us/edge) | >= 80 |
+
 
 It works with the new Microsoft Edge as well as the most recent versions (post version-80) of Google Chrome and Chromium which use a new encryption mechanism.
 
