@@ -17,16 +17,28 @@ v10 = 1  # Indice du tableau 'counter'
 
 
 # Copie le fichier contenant les mots de passes (pour permissions)
-def init_db():
-    path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Default\Login Data")
-    db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
+def init_db(browser):
+    if browser = 3:
+        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Default\Login Data")
+        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
+    else if brower = 2:
+        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Default\Login Data")
+        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
+    else :
+        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Default\Login Data")
+        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
     copyfile(path, db_path)
     return db_path
 
 
 # Récupère la clé utilisée pa os_crypt
-def get_os_crypt_key():
-    pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Local State")
+def get_os_crypt_key(browser):
+    if browser = 3 :
+        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Local State")
+    else if browser = 2 :
+        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Local State")
+    else :
+        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Local State")
     with open(pref_service_path) as f:
         d = json.load(f)
     encrypted_key = base64.decodebytes(bytes(d['os_crypt']['encrypted_key'], 'utf-8'))[len(DPAPI_prefix):]
@@ -58,7 +70,7 @@ def get_nonce(ciphertext):
 
 
 # Déchiffre la string/le mot de passe avec la methode v10 (AES256-GCM avec nonce)
-def get_decrypted_data(encrypted_password):
+def get_decrypted_data(encrypted_password, browser):
     # Récupère la nonce de 12 bytes en l'isolant
     nonce = get_nonce(encrypted_password)
 
@@ -66,34 +78,49 @@ def get_decrypted_data(encrypted_password):
     raw_cipher = encrypted_password[len(v10_prefix) + nonce_size:]
 
     # Construit AEAD avec la clé récupérée dans le PrefService
-    cryptor = AESGCM(get_os_crypt_key())
+    cryptor = AESGCM(get_os_crypt_key(browser))
 
     return cryptor.decrypt(nonce, raw_cipher, b"")
 
 
 # Sélectionne la méthode adéquate pour déchiffrer la string
-def multi_decrypt(encrypted_data, counter):
+def multi_decrypt(encrypted_data, browser, counter):
     if legacy_string(encrypted_data):
         counter[legacy] += 1
         return get_decrypted_data_legacy(encrypted_data)
     else:
         counter[v10] += 1
-        return get_decrypted_data(encrypted_data)
+        return get_decrypted_data(encrypted_data, browser)
 
+# Définit les navigateurs recensés compatibles
+def switch_browser(argument):
+    browser_choice = {
+        "1": "Google Chrome",
+        "2": "Chromium Project",
+        "3": "Microsoft Edge (new)"
+    }
+    return browser_choice.get(argument, "Invalid browser, testing with Chrome...")
 
 if __name__ == "__main__":
 
     print("==== Chrome/Chromium Password Decrypter (Windows) ====")
     print("\t=== by Julien SATTI @ LIF/UQAC ===")
 
+    # Demande le navigateur sur lequel agir
+    print("\nSelect your browser:")
+    print("  1. Google Chrome\n  2. Chromium (Project)\n  3. Microsoft Edge (new)")
+    input_browser = input()
+    print("\rWorking on: {}".format(switch_browser(input_browser)))
+
+    # Initialise le compteur d'identifiants
     counter = [0, 0]
 
     # Lance la boucle dans la BDD pour déchiffrer et afficher les identifiants
-    for url, user, encrypted_password in get_encrypted_data(init_db()):
+    for url, user, encrypted_password in get_encrypted_data(init_db(input_browser)):
         if url:  # Vérifie que l'enregistrement SQL n'est pas vide
             print("\nProcessing record number " + str(counter[legacy] + counter[v10]) + ":")
             print(" * Website: {}".format(url))
             print(" * Username: {}".format(user))
-            print("\r * Password: {}".format(multi_decrypt(encrypted_password, counter).decode('utf-8')))
+            print("\r * Password: {}".format(multi_decrypt(encrypted_password, input_browser, counter).decode('utf-8')))
 
     print("\nA total of " + str(counter[legacy] + counter[v10]) + " credentials have been decrypted, including " + str(counter[legacy]) + " using the legacy DPAPI encryption...")
