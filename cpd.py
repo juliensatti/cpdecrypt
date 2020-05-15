@@ -18,10 +18,10 @@ v10 = 1  # Indice du tableau 'counter'
 
 # Copie le fichier contenant les mots de passes (pour permissions)
 def init_db(browser):
-    if browser == 3:
+    if browser == "3" :
         path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Default\Login Data")
         db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
-    elif browser == 2:
+    elif browser == "2" :
         path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Default\Login Data")
         db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
     else :
@@ -33,9 +33,9 @@ def init_db(browser):
 
 # Récupère la clé utilisée pa os_crypt
 def get_os_crypt_key(browser):
-    if browser == 3 :
+    if browser == "3" :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Local State")
-    elif browser == 2 :
+    elif browser == "2" :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Local State")
     else :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Local State")
@@ -96,19 +96,23 @@ def multi_decrypt(encrypted_data, browser, counter):
 def switch_browser(argument):
     browser_choice = {
         "1": "Google Chrome",
-        "2": "Chromium Project",
-        "3": "Microsoft Edge (new)"
+        "2": "Chromium (Project)",
+        "3": "Microsoft Edge (>= 80)"
     }
-    return browser_choice.get(argument, "Invalid browser, testing with Chrome...")
+    if not input_browser.isdigit() or int(input_browser) > 3 or int(input_browser) < 1 :
+        print("\nInvalid browser, exiting...")
+        exit()
+    else :
+        return browser_choice.get(argument)
 
 if __name__ == "__main__":
 
-    print("==== Chrome/Chromium Password Decrypter (Windows) ====")
-    print("\t=== by Julien SATTI @ LIF/UQAC ===")
+    print("==== Chromium Password Decrypter (Windows) ====")
+    print("\t=== by Julien SATTI @ LIF ===")
 
     # Demande le navigateur sur lequel agir
     print("\nSelect your browser:")
-    print("  1. Google Chrome\n  2. Chromium (Project)\n  3. Microsoft Edge (new)")
+    print("  1. Google Chrome\n  2. Chromium (Project)\n  3. Microsoft Edge (>= 80)")
     input_browser = input()
     print("\rWorking on: {}".format(switch_browser(input_browser)))
 
