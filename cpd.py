@@ -1,5 +1,4 @@
 #! /usr/bin/env python3                                                                                                                                                                                                                       
-
 import sqlite3
 import os
 from os import getenv
@@ -13,8 +12,8 @@ DPAPI_prefix = b'DPAPI'
 v10_prefix = b'v10'
 nonce_size = 12  # 96/8
 key_length = 32  # 256/8
-legacy = 0
-v10 = 1
+legacy = 0  # Indice du tableau 'counter'
+v10 = 1  # Indice du tableau 'counter'
 
 
 # Copie le fichier contenant les mots de passes (pour permissions)
@@ -42,22 +41,23 @@ def get_encrypted_data(db_path):
     return data
 
 
+# Teste si la string est chiffrée avec la méthode legacy
 def legacy_string(encrypted_password):
     return not encrypted_password.startswith(v10_prefix)
 
 
-# Méthode legacy pré-v10 avec DPAPI
+# Déchiffre la string/le mot de passe avec la methode legacy (DPAPI sans entropie secondaire)
 def get_decrypted_data_legacy(legacy_encrypted_password):
     return win32crypt.CryptUnprotectData(legacy_encrypted_password, None, None, None, 0)[1]
 
 
-# Obtenir la nonce
+# Obtient la nonce à partir de la string chiffrée
 def get_nonce(ciphertext):
     # 'v10' is 3 bytes, we remove that
     return ciphertext[len(v10_prefix):nonce_size + len(v10_prefix)]
 
 
-# Methode v10 pour déchiffre les mdp
+# Déchiffre la string/le mot de passe avec la methode v10 (AES256-GCM avec nonce)
 def get_decrypted_data(encrypted_password):
     # Récupère la nonce de 12 bytes en l'isolant
     nonce = get_nonce(encrypted_password)
@@ -65,12 +65,13 @@ def get_decrypted_data(encrypted_password):
     # Isole le cipher en retirant le préfixe
     raw_cipher = encrypted_password[len(v10_prefix) + nonce_size:]
 
-    # making the key
+    # Construit AEAD avec la clé récupérée dans le PrefService
     cryptor = AESGCM(get_os_crypt_key())
 
     return cryptor.decrypt(nonce, raw_cipher, b"")
 
 
+# Sélectionne la méthode adéquate pour déchiffrer la string
 def multi_decrypt(encrypted_data, counter):
     if legacy_string(encrypted_data):
         counter[legacy] += 1
