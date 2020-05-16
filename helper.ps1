@@ -18,8 +18,8 @@ function Main {
         Write-Host "`n$p was found on your system:"
         # A version of Python is installed
         # Check if this version is Python 3.8.3
-        if($p -eq "Python 3.8.3") {
-	    Write-Host " -"$p" is the required version, nothing to do..."
+        if($p.StartsWith("Python 3.8.3")) {
+            Write-Host " -"$p" is the required version, nothing to do..."
             Install-Libraries
         } else {
             Install-Python383
@@ -89,11 +89,11 @@ function Install-Python383 {
 function Verification-Python383 {
     # Check environment for Python 3.8.3
     $p = &{python -V} 2>&1
-    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -or ($p -eq "Python 3.8.3")) {
+    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -or ($p.StartsWith("Python 3.8.3"))) {
         Write-Host " - Python 3.8.3 installation failed!"
         Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
-	pause
-	exit
+        pause
+        exit
     } else {
         Write-Host " - Python 3.8.3 is now installed!"
     }
@@ -101,9 +101,9 @@ function Verification-Python383 {
 
 # Fonction dédiée à l'installation des deux librairies nécessaires
 function Install-Libraries {
-    # Upgrading pip
-    Write-Host " - Upgrading pip..."
-    python -m pip install --upgrade pip 1>$null
+    # Upgrading pip (disabled temporarly)
+    # Write-Host " - Upgrading pip..."
+    # python -m pip install --upgrade pip 1>$null
 
     # Install required libraries using pip
     # Install pywin32
