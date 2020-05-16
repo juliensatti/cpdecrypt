@@ -3,7 +3,7 @@
 # Version-control: https://git.duework.org/julien/cpdecrypt
 
 Write-Host "== CPD Requirements Installation Helper =="
-Write-Host "	== by Julien SATTI @ LIF ==`n"
+Write-Host "	== by Julien SATTI @ LIF =="
 
 # Fonction main appelant les autres fonction
 function Main {
@@ -11,19 +11,19 @@ function Main {
     $p = &{python -V} 2>&1
     $version = if($p -is [System.Management.Automation.ErrorRecord]) {
         # Python isn't installed
-        Write-Host "Python 3.8.3 was not found on your system:"
+        Write-Host "`nPython 3.8.3 was not found on your system:"
         Install-Python383
         Main
     }  else {
-        Write-Host "$p was found on your system:"
+        Write-Host "`n$p was found on your system:"
         # A version of Python is installed
         # Check if this version is Python 3.8.3
         if($p -eq "Python 3.8.3") {
+	    Write-Host " -"$p" is the required version, nothing to do..."
+            Install-Libraries
+        } else {
             Install-Python383
             Main
-        } else {
-            Write-Host " -"$p" is the required version, nothing to do..."
-            Install-Libraries
         }
     }
 }
@@ -82,23 +82,21 @@ function Install-Python383 {
     Write-Host " - Installing Python 3.8.3, please follow the instructions on screen..."
     Start-Process $pythonNameLoc -ArgumentList $Arguments -Wait
 
-    # Set the EnvPath if install succeeded
-    # Check environment for Python 3.8.3
-    $p = &{python -V} 2>&1
-    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -and ($p -eq "Python 3.8.3")) {
-        Write-Host " - Python 3.8.3 is now installed!"
-        Set-EnvPath
-    } else {
-        Write-Host " - Python 3.8.3 installation failed!"
-        Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
-        exit
-    }
+    Verification-Python383
 }
 
-# Fonction dédiée à l'ajout au PATH de la variable d'environnement python
-function Set-EnvPath {
-    Write-Host " - Setting environment variable..."
-    [Environment]::SetEnvironmentVariable("PATH", "${env:path};${targetDir}", "Machine")
+# Fonction dédié à la vérification de la bonne installation et à l'arrêt en cas d'échec
+function Verification-Python383 {
+    # Check environment for Python 3.8.3
+    $p = &{python -V} 2>&1
+    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -or ($p -eq "Python 3.8.3")) {
+        Write-Host " - Python 3.8.3 installation failed!"
+        Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
+	pause
+	exit
+    } else {
+        Write-Host " - Python 3.8.3 is now installed!"
+    }
 }
 
 # Fonction dédiée à l'installation des deux librairies nécessaires
