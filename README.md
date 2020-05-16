@@ -37,7 +37,7 @@ python cpd.py
 
 ## Author
 
-This program has been created is being made available to you by Julien SATTI.
+This program has been created and is being made available to you by Julien SATTI.
 
 ## Context
 
