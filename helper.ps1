@@ -18,7 +18,7 @@ function Main {
         Write-Host "$p was found on your system:"
         # A version of Python is installed
         # Check if this version is Python 3.8.3
-        if($p -eq "Python 3.6.8") {
+        if($p -eq "Python 3.8.3") {
             Install-Python383
             Main
         } else {
@@ -42,7 +42,7 @@ function Install-Python383 {
     # Some packages look for Python here
     $targetDir = "C:\Python38"
 
-    Write-Host " - Downloading Python 3.8.3 from the source"
+    Write-Host " - Downloading Python 3.8.3 from the source..."
     # create the download directory and get the exe file
     $pythonNameLoc = $tempDirectory + "python383.exe"
     New-Item -ItemType directory -Path $tempDirectory -Force | Out-Null
@@ -85,11 +85,11 @@ function Install-Python383 {
     # Set the EnvPath if install succeeded
     # Check environment for Python 3.8.3
     $p = &{python -V} 2>&1
-    $version = if($p -is [System.Management.Automation.ErrorRecord] and $p -eq "Python 3.6.8") {
-        Write-Host " - Python 3.8.3 is now installed"
+    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -and ($p -eq "Python 3.8.3")) {
+        Write-Host " - Python 3.8.3 is now installed!"
         Set-EnvPath
     } else {
-        Write-Host " - Python 3.8.3 installation failed"
+        Write-Host " - Python 3.8.3 installation failed!"
         Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
         exit
     }
@@ -97,9 +97,7 @@ function Install-Python383 {
 
 # Fonction dédiée à l'ajout au PATH de la variable d'environnement python
 function Set-EnvPath {
-
-    # Set the PATH environment variable for the entire machine (that is, for all users) to include the Python install dir
-    Write-Host " - Setting environment variable"
+    Write-Host " - Setting environment variable..."
     [Environment]::SetEnvironmentVariable("PATH", "${env:path};${targetDir}", "Machine")
 }
 
