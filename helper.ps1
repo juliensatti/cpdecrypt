@@ -9,15 +9,12 @@ Write-Host "	== by Julien SATTI @ LIF ==`n"
 function Main {
     # Check environment for Python 3.8.3
     $p = &{python -V} 2>&1
-    $version = if($p -is [System.Management.Automation.ErrorRecord])
-    {
+    $version = if($p -is [System.Management.Automation.ErrorRecord]) {
         # Python isn't installed
         Write-Host "Python 3.8.3 was not found on your system:"
         Install-Python383
         Main
-    }
-    else
-    {
+    }  else {
         Write-Host "$p was found on your system:"
         # A version of Python is installed
         # Check if this version is Python 3.8.3
@@ -85,11 +82,25 @@ function Install-Python383 {
     Write-Host " - Installing Python 3.8.3, please follow the instructions on screen..."
     Start-Process $pythonNameLoc -ArgumentList $Arguments -Wait
 
-    # Set the PATH environment variable for the entire machine (that is, for all users) to include the Python install dir
-    Write-Host " * Setting environment variable"
-    [Environment]::SetEnvironmentVariable("PATH", "${env:path};${targetDir}", "Machine")
+    # Set the EnvPath if install succeeded
+    # Check environment for Python 3.8.3
+    $p = &{python -V} 2>&1
+    $version = if($p -is [System.Management.Automation.ErrorRecord] and $p -eq "Python 3.6.8") {
+        Write-Host " - Python 3.8.3 is now installed"
+        Set-EnvPath
+    } else {
+        Write-Host " - Python 3.8.3 installation failed"
+        Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
+        exit
+    }
+}
 
-    Write-Host " - Python 3.8.3 is now installed"
+# Fonction dédiée à l'ajout au PATH de la variable d'environnement python
+function Set-EnvPath {
+
+    # Set the PATH environment variable for the entire machine (that is, for all users) to include the Python install dir
+    Write-Host " - Setting environment variable"
+    [Environment]::SetEnvironmentVariable("PATH", "${env:path};${targetDir}", "Machine")
 }
 
 # Fonction dédiée à l'installation des deux librairies nécessaires
