@@ -89,7 +89,7 @@ function Install-Python383 {
 function Verification-Python383 {
     # Check environment for Python 3.8.3
     $p = &{python -V} 2>&1
-    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -or ($p.StartsWith("Python 3.8.3"))) {
+    $version = if(($p -is [System.Management.Automation.ErrorRecord]) -or -not ($p.StartsWith("Python 3.8.3"))) {
         Write-Host " - Python 3.8.3 installation failed!"
         Write-Host "`nProgram incomplete, please re-run it and make sure to follow instructions on screen!`n"
         pause
