@@ -101,21 +101,31 @@ function Verification-Python383 {
 
 # Fonction dédiée à l'installation des deux librairies nécessaires
 function Install-Libraries {
-    # Upgrading pip (disabled temporarly)
-    # Write-Host " - Upgrading pip..."
-    # python -m pip install --upgrade pip 1>$null
+    # Upgrading pip
+    Write-Host " - Upgrading pip..."
+    pip install --upgrade pip 1>$null
 
     # Install required libraries using pip
-    # Install pywin32
-    Write-Host " - Installing pywin32..."
-    python -m pip install pywin32 1>$null
-
-    # Install aead
-    Write-Host " - Installing aead..."
-    python -m pip install aead 1>$null
+    # Install pywin32 (or not if already installed)
+    $s = &{pip freeze | Select-String -Pattern "pywin32"}
+    if([string]::IsNullOrWhitespace($s)) {
+        Write-Host " - Installing pywin32..."
+        python -m pip install pywin32 1>$null
+    } else {
+        Write-Host " - pywin32 is already installed..."
+    }
+    
+    # Install aead(or not if already installed)
+    $s = &{pip freeze | Select-String -Pattern "aead"}
+    if([string]::IsNullOrWhitespace($s)) {
+        Write-Host " - Installing aead..."
+        python -m pip install aead 1>$null
+    } else {
+        Write-Host " - aead is already installed..."
+    }
 }
 
 # Lancement de la fonction principale et fin
 Main
-Write-Host "`nProgram complete, you should now be able to run cpdecrypt!`n"
+Write-Host "`nProgram complete, you should be able to run cpdecrypt!`n"
 pause
