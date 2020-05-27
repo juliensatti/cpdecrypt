@@ -15,42 +15,63 @@ nonce_size = 12  # 96/8
 key_length = 32  # 256/8
 legacy = 0  # Indice du tableau 'counter'
 v10 = 1  # Indice du tableau 'counter'
+appdata = os.path.abspath(getenv("APPDATA"))
+db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFileCPD")  # Emplacement temporaire pour Login File
+browser_choice = {
+    "1": ["Google Chrome",
+          appdata + r"\..\Local\Google\Chrome\User Data\Default\Login Data",
+          appdata + r"\..\Local\Google\Chrome\User Data\Local State"],
+    "2": ["Chromium (Project)",
+          appdata + r"\..\Local\Chromium\User Data\Default\Login Data",
+          appdata + r"\..\Local\Chromium\User Data\Local State"],
+    "3": ["Microsoft Edge (>= 80)",
+          appdata + r"\Opera Software\Opera Stable\Login Data",
+          appdata + r"\Opera Software\Opera Stable\Local State"],
+    "4": ["Opera Browser (>= 15)",
+          appdata + r"\Opera Software\Opera Stable\Login Data",
+          appdata + r"\Opera Software\Opera Stable\Local State"],
+    "5": ["Yandex Browser (no Master Password)",
+          appdata + r"\..\Local\Yandex\YandexBrowser\User Data\Default\Ya Passman Data",
+          appdata + r"\..\Local\Yandex\YandexBrowser\User Data\Local State"],
+    "6": ["Vivaldi",
+          appdata + r"\..\Local\Vivaldi\User Data\Default\Login Data",
+          appdata + r"\..\Local\Vivaldi\User Data\Local State"],
+    "7": ["Brave Browser",
+          appdata + r"\..\Local\BraveSoftware\Brave-Browser\User Data\Default\Login Data",
+          appdata + r"\..\Local\BraveSoftware\Brave-Browser\User Data\Local State"],
+    "8": ["Comodo Dragon",
+          appdata + r"\..\Local\Comodo\Dragon\User Data\Default\Login Data",
+          appdata + r"\..\Local\Comodo\Dragon\User Data\Local State"]
+}  # Dictionnaire des navigateurs supportés et des fichiers clés (Login Data & Pref Service)
 
 
-# Copie le fichier contenant les mots de passes (pour permissions)
+# Copie le fichier contenant les mots de passes (pour simultanéité)
 def init_db(browser):
-    if browser == "3":
-        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Default\Login Data")
-        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
-    elif browser == "2":
-        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Default\Login Data")
-        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
-    else:
-        path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Default\Login Data")
-        db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFile")
-    copyfile(path, db_path)
+    copyfile(browser_choice[browser][1], db_path)
     return db_path
+
+
+# Supprime le fichier temporaire créé par le programme
+def end():
+    os.remove(db_path)
 
 
 # Récupère la clé utilisée pa os_crypt
 def get_os_crypt_key(browser):
-    if browser == "3":
-        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Microsoft\Edge\User Data\Local State")
-    elif browser == "2":
-        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Chromium\User Data\Local State")
-    else:
-        pref_service_path = os.path.abspath(getenv("APPDATA") + r"\..\Local\Google\Chrome\User Data\Local State")
-    with open(pref_service_path) as f:
+    with open(browser_choice[browser][2]) as f:
         d = json.load(f)
     encrypted_key = base64.decodebytes(bytes(d['os_crypt']['encrypted_key'], 'utf-8'))[len(DPAPI_prefix):]
     return win32crypt.CryptUnprotectData(encrypted_key, None, None, None, 0)[1]
 
 
 # Renvoie depuis la base de données les valeurs chiffrées
-def get_encrypted_data(db_path):
+def get_encrypted_data(browser):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    data = cursor.execute('SELECT action_url, username_value, password_value FROM logins')
+    if browser == "5":  # Cas particulier pour Yandex
+        data = cursor.execute('SELECT origin_url, username_value, password_value FROM logins')
+    else:
+        data = cursor.execute('SELECT action_url, username_value, password_value FROM logins')
     return data
 
 
@@ -86,7 +107,7 @@ def get_decrypted_data(string, browser):
 
 # Sélectionne la méthode adéquate pour déchiffrer la string
 def multi_decrypt(encrypted_data, browser, count):
-    if legacy_string(encrypted_data):
+    if legacy_string(encrypted_data) and browser != "5":
         count[legacy] += 1
         return get_decrypted_data_legacy(encrypted_data)
     else:
@@ -96,16 +117,11 @@ def multi_decrypt(encrypted_data, browser, count):
 
 # Définit les navigateurs recensés compatibles
 def switch_browser(argument):
-    browser_choice = {
-        "1": "Google Chrome",
-        "2": "Chromium (Project)",
-        "3": "Microsoft Edge (>= 80)"
-    }
-    if not input_browser.isdigit() or int(input_browser) > 3 or int(input_browser) < 1:
+    if not input_browser.isdigit() or int(input_browser) > 8 or int(input_browser) < 1:
         print("\nInvalid browser, exiting...")
         exit()
     else:
-        return browser_choice.get(argument)
+        return browser_choice.get(argument)[0]
 
 
 if __name__ == "__main__":
@@ -115,20 +131,26 @@ if __name__ == "__main__":
 
     # Demande le navigateur sur lequel agir
     print("\nSelect your browser:")
-    print("  1. Google Chrome\n  2. Chromium (Project)\n  3. Microsoft Edge (>= 80)")
+    for x in browser_choice:
+        print("   "+x+". " + browser_choice[x][0])
     input_browser = input()
     print("\rWorking on: {}".format(switch_browser(input_browser)))
 
     # Initialise le compteur d'identifiants
     counter = [0, 0]
 
+    # Initialise la BDD
+    init_db(input_browser)
+
     # Lance la boucle dans la BDD pour déchiffrer et afficher les identifiants
-    for url, user, encrypted_password in get_encrypted_data(init_db(input_browser)):
+    for url, user, encrypted_password in get_encrypted_data(input_browser):
         if url:  # Vérifie que l'enregistrement SQL n'est pas vide
             print("\nProcessing record number " + str(counter[legacy] + counter[v10]) + ":")
             print(" * Website: {}".format(url))
             print(" * Username: {}".format(user))
-            print("\r * Password: {}".format(multi_decrypt(encrypted_password, input_browser, counter).decode('utf-8')))
+            print(" * Password: {}".format(multi_decrypt(encrypted_password, input_browser, counter).decode('utf-8')))
 
     print("\nA total of " + str(counter[legacy] + counter[v10]) + " credentials have been decrypted, including " + str(
         counter[legacy]) + " using the legacy DPAPI encryption...")
+
+    end()

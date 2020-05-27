@@ -1,14 +1,19 @@
 # Password Decrypter for Chromium-based browsers
 ![](https://git.duework.org/julien/cpdecrypt/-/wikis/uploads/5747a35a1b5a3f1cf97b8a8bc1702da1/header.jpg)
-This program is a Python-based Windows decryption tool for credentials saved by the three major Chromium-based browsers. It works with the **new** Microsoft Edge as well as the most recent versions (post version-80) of Google Chrome and Chromium which use a new encryption mechanism.
+This program is a Python-based Windows decryption tool for credentials saved by the three major Chromium-based browsers. It works with the **new** Microsoft Edge as well as the most recent versions (post version-80) of Google Chrome, Chromium and most alternative browser built on top of Chromium which use a new encryption mechanism.
 
-| Browser | Version |
-| ------ | ------ |
-| [Google Chrome](https://www.google.com/chrome/) | All, even >= 80 |
-| [Chromium Project](https://chromium.woolyss.com/download/en/) | All, even >= 80 |
-| [Microsoft Edge](https://www.microsoft.com/en-us/edge) | >= 80 |
+| Browser | Version | Desktop Market Share
+| ------ | ------ |  ------ |
+| [Google Chrome](https://www.google.com/chrome/) | Any (even ≥ 80) | ≈ 70% | 
+| [Opera Browser](https://www.opera.com) | ≥ 15 | ≈ 2.4% | 
+| [Yandex Browser](https://browser.yandex.com) | Any | ≈ 0.5% | 
+| [Chromium Project](https://chromium.woolyss.com/download/en/) | Any (even ≥ 80) | ≈ 0.16% | 
+| [Microsoft Edge](https://www.microsoft.com/en-us/edge) | ≥ 80 | ≈ 0.14% (legacy ≈ 5%)  | 
+| [Vivaldi](https://vivaldi.com/) | Any | ≈ 0.04% |
+| [Brave Browser](https://brave.com/) | Any | N/A | 
+| [Comodo Dragon](https://www.comodo.com/email/browsers-toolbars/browser.php?track=16208&af=16208) | Any | N/A | 
 
-## ⚡️ Automatic installation
+## ⚡ Automatic installation
 
 1. Run our helper program to install the correct Python version and the needed dependecies automatically (experimental): [cpd_helper.exe](uploads/68ee1b7fc512146667e5aeb92da7324f/cpd_helper.exe)
 
@@ -23,7 +28,7 @@ cd cpdecrypt
 python cpd.py
 ````
 
-## 🤓 Manual installation
+## ☣ Manual installation
 
 1. Intall Python by visiting the official [source](https://www.python.org/downloads/windows/]) and selecting the appropriate and desired release (we use python3.8).
 
