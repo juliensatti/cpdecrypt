@@ -6,7 +6,7 @@ This program is a Python-based Windows decryption tool for credentials saved by 
 | ------ | ------ |  ------ |
 | [Google Chrome](https://www.google.com/chrome/) | Any (even ≥ 80) | ≈ 70% | 
 | [Opera Browser](https://www.opera.com) | ≥ 15 | ≈ 2.4% | 
-| [Yandex Browser](https://browser.yandex.com) | Any | ≈ 0.5% | 
+| [Yandex Browser (partial)](https://browser.yandex.com) | Any | ≈ 0.5% | 
 | [UC Browser](https://www.ucweb.comm) | Any | ≈ 0.3% | 
 | [Coc Coc](https://cococ.com) | Any | ≈ 0.25% | 
 | [QQ Browser](https://browser.qq.com) | Any | ≈ 0.2% | 

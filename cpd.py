@@ -88,10 +88,7 @@ def get_os_crypt_key(browser):
 def get_encrypted_data(browser):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    if browser == "10":  # Cas particulier pour Yandex
-        data = cursor.execute('SELECT origin_url, username_value, password_value FROM wow_logins')
-    else:
-        data = cursor.execute('SELECT action_url, username_value, password_value FROM logins')
+    data = cursor.execute(browser_choice[browser][3])
     return data
 
 
@@ -127,7 +124,7 @@ def get_decrypted_data(string, browser):
 
 # Sélectionne la méthode adéquate pour déchiffrer la string
 def multi_decrypt(encrypted_data, browser, count):
-    if legacy_string(encrypted_data) and browser != "5":
+    if legacy_string(encrypted_data) and browser != "5":  # Yandex n'ajoute aucun préfixe
         count[legacy] += 1
         return get_decrypted_data_legacy(encrypted_data)
     else:
