@@ -20,28 +20,48 @@ db_path = os.path.abspath(getenv("APPDATA") + r"\..\..\LoginFileCPD")  # Emplace
 browser_choice = {
     "1": ["Google Chrome",
           appdata + r"\..\Local\Google\Chrome\User Data\Default\Login Data",
-          appdata + r"\..\Local\Google\Chrome\User Data\Local State"],
-    "2": ["Chromium (Project)",
+          appdata + r"\..\Local\Google\Chrome\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
+    "2": ["Chromium Project",
           appdata + r"\..\Local\Chromium\User Data\Default\Login Data",
-          appdata + r"\..\Local\Chromium\User Data\Local State"],
+          appdata + r"\..\Local\Chromium\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
     "3": ["Microsoft Edge (>= 80)",
           appdata + r"\Opera Software\Opera Stable\Login Data",
-          appdata + r"\Opera Software\Opera Stable\Local State"],
+          appdata + r"\Opera Software\Opera Stable\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
     "4": ["Opera Browser (>= 15)",
           appdata + r"\Opera Software\Opera Stable\Login Data",
-          appdata + r"\Opera Software\Opera Stable\Local State"],
+          appdata + r"\Opera Software\Opera Stable\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
     "5": ["Yandex Browser (no Master Password)",
           appdata + r"\..\Local\Yandex\YandexBrowser\User Data\Default\Ya Passman Data",
-          appdata + r"\..\Local\Yandex\YandexBrowser\User Data\Local State"],
+          appdata + r"\..\Local\Yandex\YandexBrowser\User Data\Local State",
+          "SELECT action_url, username_value, password_value FROM logins"],
     "6": ["Vivaldi",
           appdata + r"\..\Local\Vivaldi\User Data\Default\Login Data",
-          appdata + r"\..\Local\Vivaldi\User Data\Local State"],
+          appdata + r"\..\Local\Vivaldi\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
     "7": ["Brave Browser",
           appdata + r"\..\Local\BraveSoftware\Brave-Browser\User Data\Default\Login Data",
-          appdata + r"\..\Local\BraveSoftware\Brave-Browser\User Data\Local State"],
+          appdata + r"\..\Local\BraveSoftware\Brave-Browser\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
     "8": ["Comodo Dragon",
           appdata + r"\..\Local\Comodo\Dragon\User Data\Default\Login Data",
-          appdata + r"\..\Local\Comodo\Dragon\User Data\Local State"]
+          appdata + r"\..\Local\Comodo\Dragon\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
+    "9": ["Coc Coc Browser",
+          appdata + r"\..\Local\CocCoc\Browser\User Data\Default\Login Data",
+          appdata + r"\..\Local\CocCoc\Browser\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"],
+    "10": ["UC Browser",
+           appdata + r"\..\Local\UCBrowser\User Data_i18n\Default\UC Login Data.17",
+           appdata + r"\..\Local\UCBrowser\User Data_i18n\Local State",
+           "SELECT origin_url, username_value, password_value FROM wow_logins"],
+    "11": ["QQ Browser (Tencent)",
+           appdata + r"\..\Local\Tencent\QQBrowser\User Data\Default\Login Data",
+           appdata + r"\..\Local\Tencent\QQBrowser\User Data\Local State",
+          "SELECT origin_url, username_value, password_value FROM logins"]
 }  # Dictionnaire des navigateurs supportés et des fichiers clés (Login Data & Pref Service)
 
 
@@ -68,8 +88,8 @@ def get_os_crypt_key(browser):
 def get_encrypted_data(browser):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    if browser == "5":  # Cas particulier pour Yandex
-        data = cursor.execute('SELECT origin_url, username_value, password_value FROM logins')
+    if browser == "10":  # Cas particulier pour Yandex
+        data = cursor.execute('SELECT origin_url, username_value, password_value FROM wow_logins')
     else:
         data = cursor.execute('SELECT action_url, username_value, password_value FROM logins')
     return data
@@ -117,7 +137,7 @@ def multi_decrypt(encrypted_data, browser, count):
 
 # Définit les navigateurs recensés compatibles
 def switch_browser(argument):
-    if not input_browser.isdigit() or int(input_browser) > 8 or int(input_browser) < 1:
+    if not input_browser.isdigit() or int(input_browser) > 11 or int(input_browser) < 1:
         print("\nInvalid browser, exiting...")
         exit()
     else:
