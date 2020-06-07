@@ -5,6 +5,7 @@ import os
 from os import getenv
 from shutil import copyfile
 import json
+import cryptography
 import win32crypt
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import base64
@@ -119,7 +120,10 @@ def get_decrypted_data(string, browser):
     # Construit AEAD avec la clé récupérée dans le PrefService
     cryptor = AESGCM(get_os_crypt_key(browser))
 
-    return cryptor.decrypt(nonce, raw_cipher, b"")
+    try:
+        return cryptor.decrypt(nonce, raw_cipher, b"")
+    except cryptography.exceptions.InvalidTag:
+        return b"(erreur)"
 
 
 # Sélectionne la méthode adéquate pour déchiffrer la string
