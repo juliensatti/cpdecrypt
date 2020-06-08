@@ -1,5 +1,16 @@
 #! /usr/bin/env python3
 
+"""
+__author__ = "Julien SATTI"
+__copyright__ = "Copyright 2020, Julien SATTI @ LIF"
+__email__ = "julien.satti1@uqac.ca"
+__source__ =  https://git.duework.org/julien/cpdecrypt
+
+CPDecrypt displays on screen the user-saved credentials from compatible Chromium-based web browsers on Windows
+by decrypting legacy passwords thanks to the DPAPI and new ones (post version-80 of Chromium) using the aead library
+for their AESGCM-256 encryption/decryption method.
+"""
+
 import sqlite3
 import os
 from os import getenv
