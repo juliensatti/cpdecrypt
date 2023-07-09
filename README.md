@@ -56,7 +56,7 @@ python cpd.py
 
 ## Author
 
-This program has been created and is being made available to you by [Julien SATTI](https://git.duework.org/julien).
+This program has been created and is being made available to you by [Julien SATTI](https://juliensatti.com).
 
 ## Context
 
