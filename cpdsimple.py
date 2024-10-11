@@ -1,10 +1,10 @@
 #! /usr/bin/env python3
 
 """
-__author__ = "Julien SATTI"
-__copyright__ = "Copyright 2020, Julien SATTI @ LIF"
+__author__ = "Julien Satti"
+__copyright__ = "Copyright 2020, Julien Satti @ LIF"
 __email__ = "julien.satti1@uqac.ca"
-__source__ =  https://git.duework.org/julien/cpdecrypt
+__source__ =  https://github.com/juliensatti/cpdecrypt
 
 La version de ce script boucle sur tous les navigateurs compatibles testés avec ce déchiffreur ;
 il ne contient aucune fonction : tout est réalisé dans le main contrairement à cpd.py ; il est également

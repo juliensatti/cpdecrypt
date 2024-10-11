@@ -1,6 +1,6 @@
 # This PowerShell script is intended to facilitate the installation of the perquisites required to run Chromium Password Decrypter
-# Author: Julien SATTI @ LIF
-# Version-control: https://git.duework.org/julien/cpdecrypt
+# Author: Julien Satti @ LIF
+# Version-control: https://github.com/juliensatti/cpdecrypt
 
 Write-Host "== CPD Requirements Installation Helper =="
 Write-Host "	== by Julien SATTI @ LIF =="
